@@ -2,9 +2,9 @@
    "name": "lambda-shell",
    "type": "module",
    "dependencies": {
-      "@gnim-js/gtk4": "^2.0.0-beta.12",
-      "@gnim-js/io": "^2.0.0-beta.12",
-      "gnim": "^2.0.0-beta.12",
+      "@gnim-js/gtk4": "^2.0.0-beta.25",
+      "@gnim-js/io": "^2.0.0-beta.25",
+      "gnim": "^2.0.0-beta.25",
       "highlight.js": "^11.12.0"
    },
    "scripts": {
