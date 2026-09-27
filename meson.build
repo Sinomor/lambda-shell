@@ -1,0 +1,59 @@
+project('lambda-shell', version: '0.0.0')
+
+app_id = 'io.github.LambdaShell'
+name = meson.project_name()
+root = meson.project_source_root()
+prefix = get_option('prefix')
+datadir = get_option('datadir')
+bindir = get_option('bindir')
+libdir = get_option('libdir')
+pkgdatadir = prefix / datadir / app_id
+
+gnim = find_program('gnim', 'node_modules/.bin/gnim')
+
+# bundle
+custom_target(
+  command: [
+    gnim,
+    'bundle',
+    '--id', app_id,
+    '-i', root / 'data' / 'icons',
+    root / 'src' / 'main.tsx',
+  ],
+  install: true,
+  install_dir: pkgdatadir,
+  output: 'gresource',
+)
+
+# executable
+custom_target(
+  command: [
+    gnim,
+    'exe',
+    pkgdatadir / 'gresource',
+    '-o', name + '.js',
+    '--id', app_id,
+    '--prefix', prefix,
+    '--datadir', datadir,
+    '--libdir', libdir,
+  ],
+  output: name + '.js',
+  install: true,
+  install_dir: pkgdatadir,
+)
+
+custom_target(
+  command: [
+    find_program('echo'),
+    '#!@0@\nLD_PRELOAD="@1@/libgtk4-layer-shell.so" @2@ $@'.format(
+      find_program('bash').full_path(),
+      dependency('gtk4-layer-shell-0').get_variable('libdir'),
+      pkgdatadir / name + '.js',
+    ),
+  ],
+  output: name,
+  capture: true,
+  install: true,
+  install_dir: prefix / bindir,
+  install_mode: 'rwxr-xr-x',
+)
